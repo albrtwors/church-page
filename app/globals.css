@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+@theme {
+    --font-sans: var(--font-aleo), ui-sans-serif, system-ui, sans-serif;
+    --font-display: var(--font-playfair), ui-serif, Georgia, serif;
+
+    --color-cloud: #f6f8fb;
+    --color-skywash: #e4f3fd;
+}
+
+:root {
+    --background: #f6f8fb;
+    --foreground: #334155;
+}
+
+body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+}
