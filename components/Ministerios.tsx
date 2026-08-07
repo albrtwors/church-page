@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import type { Ministerio } from '@/data/ministerios';
 import { ministerios } from '@/data/ministerios';
-import ImageCarouselModal from './ImageCarouselModal';
+import ImageGalleryPanel from './ImageGalleryPanel';
 import Reveal from './Reveal';
 import SectionHeader from './SectionHeader';
 
@@ -65,7 +65,8 @@ const icons: Record<Ministerio['icon'], React.ReactNode> = {
 };
 
 export default function Ministerios() {
-    const [selected, setSelected] = useState<Ministerio | null>(null);
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    const selected = ministerios[selectedIndex];
 
     return (
         <section id="ministerios" className="border-y border-sky-200/50 bg-skywash py-20">
@@ -77,65 +78,69 @@ export default function Ministerios() {
                 />
 
                 <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-                    {ministerios.map((ministerio, i) => (
-                        <Reveal
-                            as="article"
-                            key={ministerio.nombre}
-                            delay={i * 0.06}
-                            onClick={() => setSelected(ministerio)}
-                            onKeyDown={(event: React.KeyboardEvent) => {
-                                if (event.key === 'Enter' || event.key === ' ') setSelected(ministerio);
-                            }}
-                            className="group relative flex cursor-pointer flex-col overflow-hidden rounded-3xl border border-sky-200/60 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:border-sky-300 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
-                            tabIndex={0}
-                        >
-                            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-skywash text-sky-700">
-                                <svg
-                                    className="h-6 w-6"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    strokeWidth={1.6}
-                                    aria-hidden="true"
-                                >
-                                    {icons[ministerio.icon]}
-                                </svg>
-                            </span>
-                            <h3 className="mt-4 font-display text-2xl leading-snug text-sky-900">
-                                {ministerio.nombre}
-                            </h3>
-                            <p className="mt-2 text-xs leading-relaxed text-slate-500">
-                                {ministerio.descripcion}
-                            </p>
-
-                            <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-2 bg-sky-950/40 opacity-0 backdrop-blur-[2px] transition-opacity duration-300 group-hover:opacity-100">
-                                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/80 text-sky-900">
-                                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={1.5}
-                                            d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A1.5 1.5 0 0021.75 19.5V4.5A1.5 1.5 0 0020.25 3H3.75A1.5 1.5 0 002.25 4.5v15A1.5 1.5 0 003.75 21zM12 6.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
-                                        />
+                    {ministerios.map((ministerio, i) => {
+                        const isSelected = i === selectedIndex;
+                        return (
+                            <Reveal
+                                as="article"
+                                key={ministerio.nombre}
+                                delay={i * 0.06}
+                                onClick={() => setSelectedIndex(i)}
+                                onKeyDown={(event: React.KeyboardEvent) => {
+                                    if (event.key === 'Enter' || event.key === ' ') setSelectedIndex(i);
+                                }}
+                                aria-current={isSelected}
+                                tabIndex={0}
+                                className={`group relative flex cursor-pointer flex-col overflow-hidden rounded-3xl bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 ${
+                                    isSelected
+                                        ? 'border-2 border-sky-500 ring-2 ring-sky-400/50'
+                                        : 'border border-sky-200/60 hover:border-sky-300'
+                                }`}
+                            >
+                                {isSelected && (
+                                    <span className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-sky-600 px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-white shadow-md">
+                                        <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A1.5 1.5 0 0021.75 19.5V4.5A1.5 1.5 0 0020.25 3H3.75A1.5 1.5 0 002.25 4.5v15A1.5 1.5 0 003.75 21zM12 6.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
+                                            />
+                                        </svg>
+                                        Mostrando fotos
+                                    </span>
+                                )}
+                                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-skywash text-sky-700">
+                                    <svg
+                                        className="h-6 w-6"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        strokeWidth={1.6}
+                                        aria-hidden="true"
+                                    >
+                                        {icons[ministerio.icon]}
                                     </svg>
                                 </span>
-                                <span className="rounded-full bg-white/80 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-sky-900">
-                                    Ver {ministerio.imagenes.length} foto{ministerio.imagenes.length !== 1 ? 's' : ''}
-                                </span>
-                            </div>
-                        </Reveal>
-                    ))}
+                                <h3 className="mt-4 font-display text-2xl leading-snug text-sky-900">
+                                    {ministerio.nombre}
+                                </h3>
+                                <p className="mt-2 text-xs leading-relaxed text-slate-500">
+                                    {ministerio.descripcion}
+                                </p>
+                            </Reveal>
+                        );
+                    })}
                 </div>
-            </div>
 
-            <ImageCarouselModal
-                open={selected !== null}
-                onClose={() => setSelected(null)}
-                title={selected?.nombre}
-                subtitle={selected ? `${selected.imagenes.length} foto${selected.imagenes.length !== 1 ? 's' : ''}` : undefined}
-                images={selected?.imagenes ?? []}
-                label={selected ? `Fotografía de ${selected.nombre}` : undefined}
-            />
+                <ImageGalleryPanel
+                    title={`Fotos de ${selected.nombre}`}
+                    subtitle={`Haz clic en otro ministerio para ver sus fotos.`}
+                    images={selected.imagenes}
+                    alt={selected.nombre}
+                    label={`Fotografía de ${selected.nombre}`}
+                />
+            </div>
         </section>
     );
 }
